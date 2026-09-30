@@ -1,0 +1,100 @@
+.rail {
+  width: var(--rail-w);
+  flex: none;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  padding: 22px 14px;
+  gap: 30px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 6px;
+}
+.mark {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  flex: none;
+  /* the source png is a small icon on a large white field, so scale past
+     100% and clip: the box edge becomes the mark's edge, no white fringe */
+  background-image: url("/xex_logo.png");
+  background-size: 212%;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.wordmark { display: flex; flex-direction: column; line-height: 1.15; }
+.wordmark b { font-weight: 700; font-size: 14.5px; color: var(--ink); }
+.wordmark span { font-size: 11.5px; color: var(--muted-2); }
+
+.nav { display: flex; flex-direction: column; gap: 2px; }
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 10px 12px;
+  border-radius: var(--r-md);
+  color: var(--text-2);
+  font-size: 14.5px;
+  width: 100%;
+  text-align: left;
+  transition: background 0.12s ease, color 0.12s ease;
+}
+
+.item:hover { background: var(--track); }
+
+.item[data-active="true"] {
+  background: var(--ink);
+  color: var(--surface);
+  font-weight: 500;
+}
+
+.item[data-active="true"]:hover { background: var(--ink); }
+
+.foot {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 0 6px;
+}
+
+.footLabel {
+  font-size: 11.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted-3);
+}
+
+.footValue { font-size: 14px; color: var(--ink); }
+
+.collapse {
+  font-size: 13px;
+  color: var(--muted-2);
+  margin-top: 14px;
+  text-align: left;
+}
+
+.footNote { font-size: 12px; color: var(--accent-deep); }
+.collapse:hover { color: var(--ink); }
+
+@media (max-width: 720px) {
+  .rail {
+    width: 100%;
+    flex-direction: row;
+    align-items: center;
+    padding: 8px 10px;
+    gap: 0;
+    border-right: none;
+    border-top: 1px solid var(--border);
+  }
+  .brand, .foot { display: none; }
+  .nav { flex-direction: row; flex: 1; gap: 4px; }
+  .item { justify-content: center; padding: 10px 6px; font-size: 13.5px; }
+}

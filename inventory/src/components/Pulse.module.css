@@ -1,0 +1,74 @@
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 16px 26px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+}
+
+.head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.title { font-size: 22px; color: var(--ink); }
+.sub { font-size: 13.5px; color: var(--muted-2); }
+.pct { margin-left: auto; font-size: 13.5px; color: var(--muted); }
+
+.lanes { display: flex; flex-direction: column; gap: 5px; }
+
+.lane { display: flex; align-items: center; gap: 14px; }
+
+.laneName {
+  width: 96px;
+  flex: none;
+  font-size: 13px;
+  color: var(--text-2);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.track {
+  flex: 1;
+  position: relative;
+  height: 16px;
+  border-radius: var(--r-sm);
+  background: var(--track);
+  min-width: 0;
+}
+
+.block {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  border-radius: var(--r-sm);
+  background: var(--accent-strong);
+}
+
+/* A hold is real inventory but not yet a commitment, so it reads
+   as the pale value of the same hue rather than a second colour. */
+.block[data-held="true"] { background: var(--accent-pale); }
+
+.lanePct {
+  width: 38px;
+  flex: none;
+  text-align: right;
+  font-size: 12.5px;
+  color: var(--muted-2);
+}
+
+.axis { display: flex; gap: 14px; margin-top: 2px; }
+
+.axisTicks {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  font-size: 11.5px;
+  color: var(--faint);
+}
+
+.empty { font-size: 13.5px; color: var(--muted); padding: 8px 0 14px; }
+
+@media (max-width: 880px) {
+  .panel { padding: 14px 16px; }
+  .laneName { width: 68px; font-size: 12px; }
+}

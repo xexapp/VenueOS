@@ -1,0 +1,39 @@
+.shell {
+  display: flex;
+  height: 100%;
+  background: var(--canvas);
+  overflow: hidden;
+}
+
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.content {
+  flex: 1;
+  padding: 32px 34px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  overflow-y: auto;
+}
+
+/* A flex column that scrolls must not let its children shrink: the stat
+   strip (overflow: hidden) was being squeezed to zero height whenever the
+   page was taller than the viewport. */
+.content > * { flex-shrink: 0; }
+
+@media (max-width: 880px) {
+  .content { padding: 20px 16px; }
+}
+
+.boot { height: 100%; background: var(--canvas); }
+.center { min-height: 100%; display: flex; align-items: center; justify-content: center; padding: 24px 16px; }
+
+/* Below tablet width the rail becomes a bottom tab bar. */
+@media (max-width: 720px) {
+  .shell { flex-direction: column-reverse; }
+}
