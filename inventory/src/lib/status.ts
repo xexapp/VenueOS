@@ -1,4 +1,4 @@
-import type { Claim, ClaimStatus, OrderStatus, Source } from "./api";
+import type { Claim, ClaimStatus, OrderStatus, PaymentMethod, Source } from "./api";
 
 /* ============================================================
    The mockup shipped four statuses. The backend emits ten order
@@ -105,4 +105,50 @@ export function isRunning(c: Claim, now = Date.now()): boolean {
     new Date(c.starts_at).getTime() <= now &&
     new Date(c.expected_end_at).getTime() > now
   );
+}
+
+export type PayState = "online" | "paid" | "unpaid" | "free";
+
+/** Money on one booking, in the four states the desk cares about:
+ *  paid online (app), paid at the desk, still owed, or nothing to collect
+ *  (a free booking, or a desk booking saved without an amount). */
+export function payState(c: Claim): PayState {
+  const amount = Number(c.amount ?? 0);
+  if (c.source === "app") return c.is_paid && amount > 0 ? "online" : "free";
+  if (c.paid_at) return "paid";
+  return amount > 0 ? "unpaid" : "free";
+}
+
+export function methodLabel(m: PaymentMethod | "online"): string {
+  switch (m) {
+    case "online":
+      return "Online (app)";
+    case "cash":
+      return "Cash";
+    case "upi":
+      return "UPI";
+    case "card":
+      return "Card";
+    case "other":
+      return "Other";
+  }
+}
+
+/** "Paid · UPI", "Unpaid", "Paid online", or "" when there is nothing to say. */
+export function payLabel(c: Claim): string {
+  switch (payState(c)) {
+    case "online":
+      return "Paid online";
+    case "paid":
+      return `Paid · ${methodLabel(c.payment_method ?? "other")}`;
+    case "unpaid":
+      return "Unpaid";
+    case "free":
+      return "";
+  }
+}
+
+/** Owed for a session that has already started — the desk should collect. */
+export function owedNow(c: Claim, now = Date.now()): boolean {
+  return payState(c) === "unpaid" && occupiesResource(c.status) && new Date(c.starts_at).getTime() <= now;
 }

@@ -1,0 +1,30 @@
+.box {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  padding: 12px 14px;
+  border-radius: var(--r-md);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  font-size: 14px;
+}
+.box[data-state="paid"] { background: var(--track); border-color: transparent; }
+.box[data-state="unpaid"] { background: var(--tint); border-color: var(--accent-pale); }
+
+.status { font-weight: 500; color: var(--ink); }
+.box[data-state="unpaid"] .status { color: var(--accent-deep); }
+.minor { font-size: 12.5px; color: var(--muted); }
+.undo { margin-left: auto; font-size: 13px; color: var(--accent-deep); }
+.undo:hover { text-decoration: underline; }
+
+.amount { display: flex; align-items: center; gap: 6px; font-size: 15px; color: var(--muted); }
+.amount input { width: 96px; height: 36px; }
+
+.methods { display: flex; gap: 6px; flex-wrap: wrap; margin-left: auto; }
+.methods button { height: 38px; min-width: 64px; }
+
+@media (max-width: 560px) {
+  .methods { margin-left: 0; width: 100%; }
+  .methods button { flex: 1; }
+}

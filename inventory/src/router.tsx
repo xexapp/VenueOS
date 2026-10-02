@@ -4,6 +4,7 @@ import { Dashboard } from "./routes/Dashboard";
 import { Calendar } from "./routes/Calendar";
 import { Bookings } from "./routes/Bookings";
 import { Revenue } from "./routes/Revenue";
+import { Floor } from "./routes/Floor";
 
 const rootRoute = createRootRoute({ component: AppShell });
 
@@ -38,7 +39,13 @@ const revenueRoute = createRoute({
   component: Revenue,
 });
 
-const routeTree = rootRoute.addChildren([indexRoute, calendarRoute, bookingsRoute, revenueRoute]);
+const floorRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/floor",
+  component: Floor,
+});
+
+const routeTree = rootRoute.addChildren([indexRoute, floorRoute, calendarRoute, bookingsRoute, revenueRoute]);
 
 export const router = createRouter({ routeTree });
 

@@ -9,6 +9,7 @@ import styles from "./AppShell.module.css";
 
 const TITLES: Record<string, string> = {
   "/": "Dashboard",
+  "/floor": "Floor",
   "/bookings": "Bookings",
   "/calendar": "Calendar",
   "/revenue": "Revenue",

@@ -1,0 +1,16 @@
+// Cloudflare Workers deploy config for VenueOS (Workers Builds runs
+// `npm run build` then `npx wrangler deploy` from this directory).
+//
+// A static site: no Worker script, just the built `dist/` served as assets.
+// "single-page-application" serves index.html for any path that isn't a file,
+// so /calendar or /floor survive a refresh (the job public/_redirects does on Pages).
+// public/_headers is honoured by Workers static assets as well.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "venueos",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "single-page-application"
+  }
+}

@@ -3,7 +3,7 @@ import { useNavigate, useSearch } from "@tanstack/react-router";
 import type { Claim } from "@/lib/api";
 import { useSession } from "@/lib/session";
 import { useSchedule } from "@/lib/schedule";
-import { bookingView, occupiesResource, sourceLabel, TONE_STYLE } from "@/lib/status";
+import { bookingView, occupiesResource, payLabel, payState, sourceLabel, TONE_STYLE } from "@/lib/status";
 import { istDateKey, istShortDate, istTime, shiftDay, weekStart } from "@/lib/time";
 import { EmptyState, ErrorState, LoadingRows, Panel } from "@/components/Panel";
 import { BookingDialog } from "@/components/BookingDialog";
@@ -32,6 +32,7 @@ export function Bookings() {
   const [custom, setCustom] = useState({ from: today, to: shiftDay(today, 6) });
   const [via, setVia] = useState<Via>("all");
   const [showDead, setShowDead] = useState(false);
+  const [unpaidOnly, setUnpaidOnly] = useState(false);
   const [open, setOpen] = useState<Claim | null>(null);
   const [adding, setAdding] = useState(false);
   const text = search.q ?? "";
@@ -59,6 +60,7 @@ export function Bookings() {
     return (q.data?.claims ?? [])
       .filter((c) => showDead || occupiesResource(c.status))
       .filter((c) => via === "all" || (via === "app" ? c.source === "app" : c.source !== "app"))
+      .filter((c) => !unpaidOnly || (payState(c) === "unpaid" && occupiesResource(c.status)))
       .filter(
         (c) =>
           !needle ||
@@ -67,7 +69,7 @@ export function Bookings() {
           (c.source_detail ?? "").toLowerCase().includes(needle) ||
           (digits.length >= 3 && c.customer_phone.includes(digits)),
       );
-  }, [q.data, text, via, showDead]);
+  }, [q.data, text, via, showDead, unpaidOnly]);
 
   const totals = useMemo(() => {
     const live = rows.filter((c) => occupiesResource(c.status));
@@ -130,6 +132,10 @@ export function Bookings() {
           ))}
         </div>
         <label className={styles.check}>
+          <input type="checkbox" checked={unpaidOnly} onChange={(e) => setUnpaidOnly(e.target.checked)} />
+          Unpaid only
+        </label>
+        <label className={styles.check}>
           <input type="checkbox" checked={showDead} onChange={(e) => setShowDead(e.target.checked)} />
           Show cancelled &amp; expired
         </label>
@@ -164,6 +170,7 @@ export function Bookings() {
                   <th>Via</th>
                   <th>Status</th>
                   <th className={styles.right}>Amount</th>
+                  <th>Payment</th>
                 </tr>
               </thead>
               <tbody>
@@ -190,6 +197,9 @@ export function Bookings() {
                       </td>
                       <td className={`${styles.right} num`}>
                         {c.amount && Number(c.amount) > 0 ? `₹${Number(c.amount).toLocaleString("en-IN")}` : "—"}
+                      </td>
+                      <td className={styles.pay} data-state={occupiesResource(c.status) ? payState(c) : "free"}>
+                        {occupiesResource(c.status) ? payLabel(c) || "—" : "—"}
                       </td>
                     </tr>
                   );

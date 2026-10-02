@@ -35,7 +35,8 @@ phone + OTP (`/auth/otp/send`, `/auth/login/verify`).
 | `POST /api/v1/host/claims/:id/release` | "End session now" |
 | `PATCH /api/v1/host/claims/:id` | move, extend, shorten, correct details |
 | `POST /api/v1/host/claims/:id/cancel` | cancel (not paid app bookings, until refunds exist) |
-| `GET  /api/v1/host/venues/:id/revenue?from=&to=` | Revenue tab |
+| `POST /api/v1/host/claims/:id/payment`, `DELETE …/payment` | mark a desk booking paid (cash / UPI / card / other), or undo |
+| `GET  /api/v1/host/venues/:id/revenue?from=&to=` | Revenue tab: totals, collected vs owed, heatmap, customers |
 | `POST /api/v1/host/venues/:id/blocks`, `DELETE /api/v1/host/blocks/:id` | block time |
 | `POST /api/v1/orders/:id/accept`, `/reject` | decide an app request |
 

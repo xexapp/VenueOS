@@ -7,6 +7,7 @@ import { useInvalidateSchedule } from "@/lib/schedule";
 import { bookingView, isRunning, sourceLabel, TONE_STYLE } from "@/lib/status";
 import { formatMinutes, istDateTime, istTime } from "@/lib/time";
 import { BookingDialog } from "./BookingDialog";
+import { PaymentBox } from "./Payment";
 import { Modal } from "./Modal";
 import ui from "./ui.module.css";
 
@@ -146,13 +147,12 @@ export function ClaimDialog({ claim, onClose }: { claim: Claim; onClose: () => v
             <span style={{ color: "var(--muted-2)" }}>Not given</span>
           )}
         </dd>
-        <Dt>Amount</Dt>
-        <dd className="num">
-          {claim.amount && Number(claim.amount) > 0 ? `₹${Number(claim.amount).toLocaleString("en-IN")}` : "—"}
-          {claim.source === "app" ? (
-            <span style={{ color: "var(--muted-2)", marginLeft: 6 }}>{claim.is_paid ? "paid online" : "free"}</span>
-          ) : null}
-        </dd>
+        {claim.status !== "CONFIRMED" || claim.order_status !== "CONFIRMED" ? (
+          <>
+            <Dt>Amount</Dt>
+            <dd className="num">{claim.amount && Number(claim.amount) > 0 ? `₹${Number(claim.amount).toLocaleString("en-IN")}` : "—"}</dd>
+          </>
+        ) : null}
         {claim.notes ? (
           <>
             <Dt>Notes</Dt>
@@ -166,6 +166,8 @@ export function ClaimDialog({ claim, onClose }: { claim: Claim; onClose: () => v
           </>
         ) : null}
       </dl>
+
+      {claim.status === "CONFIRMED" && claim.order_status === "CONFIRMED" && !confirmCancel ? <PaymentBox claim={claim} /> : null}
 
       {confirmCancel ? (
         <label className={ui.field}>

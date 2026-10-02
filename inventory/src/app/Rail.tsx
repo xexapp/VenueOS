@@ -2,10 +2,11 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import { signOut, useSession } from "@/lib/session";
 import styles from "./Rail.module.css";
 
-/* Today's work, the week around it, the ledger behind it, and
-   what it all earned. */
+/* Today's work, the floor right now, the week around it, the
+   ledger behind it, and what it all earned. */
 const NAV = [
   { to: "/", label: "Dashboard" },
+  { to: "/floor", label: "Floor" },
   { to: "/calendar", label: "Calendar" },
   { to: "/bookings", label: "Bookings" },
   { to: "/revenue", label: "Revenue" },

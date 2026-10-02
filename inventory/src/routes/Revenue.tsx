@@ -1,12 +1,13 @@
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
-import type { Revenue as RevenueData, RevenueDay } from "@/lib/api";
+import type { HoursRule, Revenue as RevenueData, RevenueDay } from "@/lib/api";
 import { useSession, zoneLabel } from "@/lib/session";
-import { sourceLabel } from "@/lib/status";
+import { methodLabel, sourceLabel } from "@/lib/status";
 import { istDateKey, istShortDate, shiftDay, weekStart } from "@/lib/time";
 import { EmptyState, ErrorState, LoadingRows, Panel } from "@/components/Panel";
 import ui from "@/components/ui.module.css";
+import { CashUp } from "./CashUp";
 import styles from "./Revenue.module.css";
 
 /* ============================================================
@@ -35,7 +36,26 @@ const PRESETS: [Preset, string][] = [
   ["custom", "Dates…"],
 ];
 
+/** The Revenue tab: the money over a range (Overview), or one day closed
+ *  out against the till (Cash-up). One tab, two views — not another menu item. */
 export function Revenue() {
+  const [view, setView] = useState<"overview" | "cashup">("overview");
+  return (
+    <>
+      <div className={`${ui.segments} ${styles.noPrint}`}>
+        <button type="button" className={ui.segment} aria-pressed={view === "overview"} onClick={() => setView("overview")}>
+          Overview
+        </button>
+        <button type="button" className={ui.segment} aria-pressed={view === "cashup"} onClick={() => setView("cashup")}>
+          Cash-up
+        </button>
+      </div>
+      {view === "overview" ? <Overview /> : <CashUp />}
+    </>
+  );
+}
+
+function Overview() {
   const { venue } = useSession();
   const today = istDateKey();
   const [preset, setPreset] = useState<Preset>("week");
@@ -83,13 +103,13 @@ export function Revenue() {
           <EmptyState title="No bookings in this range" body="Completed and upcoming confirmed bookings show up here, from the app and the desk alike." />
         </Panel>
       ) : (
-        <Report data={q.data} stations={venue.resources.filter((r) => r.is_active).length} />
+        <Report data={q.data} stations={venue.resources.filter((r) => r.is_active).length} hours={venue.hours} />
       )}
     </>
   );
 }
 
-function Report({ data, stations }: { data: RevenueData; stations: number }) {
+function Report({ data, stations, hours }: { data: RevenueData; stations: number; hours: HoursRule[] }) {
   const total = Number(data.total);
   const appTotal = data.by_source.filter((s) => s.source === "app").reduce((a, s) => a + Number(s.amount), 0);
   const deskTotal = total - appTotal;
@@ -110,11 +130,24 @@ function Report({ data, stations }: { data: RevenueData; stations: number }) {
         <Stat label="Bookings" value={String(data.bookings)} foot={`${rupees(data.bookings ? total / data.bookings : 0)} average`} />
         <Stat label="Hours played" value={formatHours(data.hours)} foot={`${Math.round(utilisation * 100)}% of open station-hours`} />
         <Stat
-          label="Unpriced"
-          value={String(data.unpriced)}
-          foot={data.unpriced ? "desk bookings saved without an amount" : "every desk booking has an amount"}
+          label="Collected"
+          value={rupees(Number(data.collected))}
+          foot={
+            Number(data.outstanding) > 0
+              ? `${rupees(Number(data.outstanding))} still owed`
+              : Number(data.upcoming) > 0
+                ? `${rupees(Number(data.upcoming))} due from upcoming`
+                : "nothing owed"
+          }
+          warn={Number(data.outstanding) > 0}
         />
       </div>
+      {data.unpriced ? (
+        <p className={styles.note}>
+          {data.unpriced} desk booking{data.unpriced === 1 ? " was" : "s were"} saved without an amount and count as ₹0. Set
+          them from Cash-up.
+        </p>
+      ) : null}
 
       <Panel title="Revenue by day" aside="App and desk, stacked">
         <DailyChart days={data.by_day} />
@@ -126,6 +159,19 @@ function Report({ data, stations }: { data: RevenueData; stations: number }) {
         </Panel>
         <Panel title="Busy hours" aside="Bookings by start time">
           <HourBars hours={data.by_start_hour} />
+        </Panel>
+      </div>
+
+      <Panel title="When it's busy" aside="Share of stations in use, by weekday and hour">
+        <Heatmap data={data} stations={stations} hours={hours} />
+      </Panel>
+
+      <div className={styles.two}>
+        <Panel title="Customers" aside={`${data.customers} known · ${data.repeat} came back`}>
+          <Customers data={data} />
+        </Panel>
+        <Panel title="How it was paid">
+          <Methods data={data} />
         </Panel>
       </div>
 
@@ -301,9 +347,7 @@ function DailyChart({ days }: { days: RevenueDay[] }) {
 /* ---------------------------------------------------------------- stations */
 
 function StationBars({ data }: { data: RevenueData }) {
-  // Per-station app/desk split isn't in the payload, so the bar shows the
-  // station's total in one neutral fill; identity colours stay reserved
-  // for the app/desk split and are never reused to mean "a station".
+  // Same identity colours as everywhere: pink app, blue desk, stacked.
   const rows = data.by_station;
   const max = Math.max(...rows.map((r) => Number(r.amount)), 1);
   let lastKind = "";
@@ -315,10 +359,16 @@ function StationBars({ data }: { data: RevenueData }) {
         return (
           <div key={r.resource_id}>
             {head ? <div className={`${styles.group} eyebrow`}>{head}</div> : null}
-            <div className={styles.hrow} title={`${r.label}: ${rupees(Number(r.amount))} · ${r.bookings} bookings · ${formatHours(r.hours)}`}>
+            <div
+              className={styles.hrow}
+              title={`${r.label}: ${rupees(Number(r.amount))} (app ${rupees(Number(r.app))}, desk ${rupees(Number(r.desk))}) · ${r.bookings} bookings · ${formatHours(r.hours)}`}
+            >
               <span className={styles.hlabel}>{r.label}</span>
               <span className={styles.htrack}>
-                <span className={styles.hfill} style={{ width: `${(Number(r.amount) / max) * 100}%` }} />
+                <span className={styles.hstack} style={{ width: `${(Number(r.amount) / max) * 100}%` }}>
+                  {Number(r.desk) > 0 ? <span className={styles.hseg} data-k="desk" style={{ flexGrow: Number(r.desk) }} /> : null}
+                  {Number(r.app) > 0 ? <span className={styles.hseg} data-k="app" style={{ flexGrow: Number(r.app) }} /> : null}
+                </span>
               </span>
               <span className={`${styles.hval} num`}>{rupees(Number(r.amount))}</span>
               <span className={`${styles.hpct} num`}>{Math.round(r.utilisation * 100)}%</span>
@@ -326,6 +376,181 @@ function StationBars({ data }: { data: RevenueData }) {
           </div>
         );
       })}
+    </div>
+  );
+}
+
+/* ---------------------------------------------------------------- heatmap */
+
+const WEEK = [1, 2, 3, 4, 5, 6, 0]; // Mon..Sun, as the owner reads a week
+const DAY_NAMES = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+const STEPS = [0.15, 0.35, 0.55, 0.75, 1];
+
+/* One hue, light to dark: magnitude is "how full", not "app vs desk", so
+   it must not borrow either identity colour. Cells show the % on hover and
+   the busiest slot is named in words underneath. */
+function Heatmap({ data, stations, hours }: { data: RevenueData; stations: number; hours: HoursRule[] }) {
+  const [lo, hi] = useMemo(() => {
+    const opens = hours.map((h) => Number(h.opens_at.slice(0, 2)));
+    const closes = hours.map((h) => Math.ceil(Number(h.closes_at.slice(0, 2)) + Number(h.closes_at.slice(3, 5)) / 60));
+    if (opens.length) return [Math.min(...opens), Math.min(24, Math.max(...closes))];
+    return [10, 23];
+  }, [hours]);
+  const cols = Array.from({ length: Math.max(hi - lo, 1) }, (_, i) => lo + i);
+
+  const util = (wd: number, h: number) => {
+    const n = data.weekday_count[wd] * stations;
+    return n > 0 ? Math.min(1, (data.heatmap[wd]?.[h] ?? 0) / n) : 0;
+  };
+  let peak = { wd: 0, h: lo, v: 0 };
+  let quiet = { wd: 0, h: lo, v: 2 };
+  for (const wd of WEEK) {
+    if (!data.weekday_count[wd]) continue;
+    for (const h of cols) {
+      const v = util(wd, h);
+      if (v > peak.v) peak = { wd, h, v };
+      if (v < quiet.v) quiet = { wd, h, v };
+    }
+  }
+
+  return (
+    <div className={styles.chartBody}>
+      <div className={styles.heat} style={{ gridTemplateColumns: `40px repeat(${cols.length}, minmax(22px, 1fr))` }}>
+        <span />
+        {cols.map((h) => (
+          <span key={h} className={`${styles.heatHour} num`}>
+            {h % 2 === 0 || cols.length <= 14 ? pad(h) : ""}
+          </span>
+        ))}
+        {WEEK.map((wd) => (
+          <HeatRow key={wd} wd={wd} cols={cols} util={util} none={!data.weekday_count[wd]} />
+        ))}
+      </div>
+      <div className={styles.heatFoot}>
+        <span className={styles.heatScale}>
+          <span>Quiet</span>
+          {STEPS.map((v) => (
+            <i key={v} style={{ opacity: v }} />
+          ))}
+          <span>Full</span>
+        </span>
+        {peak.v > 0 ? (
+          <span className={styles.note}>
+            Busiest: <b>{DAY_NAMES[peak.wd]} {pad(peak.h)}:00</b> ({Math.round(peak.v * 100)}% of stations). Quietest:{" "}
+            <b>
+              {DAY_NAMES[quiet.wd]} {pad(quiet.h)}:00
+            </b>{" "}
+            ({Math.round(quiet.v * 100)}%) — a candidate for an off-peak price.
+          </span>
+        ) : null}
+      </div>
+    </div>
+  );
+}
+
+function HeatRow({ wd, cols, util, none }: { wd: number; cols: number[]; util: (wd: number, h: number) => number; none: boolean }) {
+  return (
+    <>
+      <span className={styles.heatDay}>{DAY_NAMES[wd]}</span>
+      {cols.map((h) => {
+        const v = util(wd, h);
+        return (
+          <span
+            key={h}
+            className={styles.heatCell}
+            data-none={none}
+            title={none ? `No ${DAY_NAMES[wd]} in this range` : `${DAY_NAMES[wd]} ${pad(h)}:00 — ${Math.round(v * 100)}% of stations in use`}
+          >
+            <i style={{ opacity: v === 0 ? 0 : 0.12 + v * 0.88 }} />
+          </span>
+        );
+      })}
+    </>
+  );
+}
+
+/* ---------------------------------------------------------------- customers */
+
+function Customers({ data }: { data: RevenueData }) {
+  if (!data.top_customers.length) {
+    return <p className={styles.note} style={{ padding: "0 24px 20px" }}>No customers with a phone number or app account in this range yet.</p>;
+  }
+  const rate = data.customers ? Math.round((data.repeat / data.customers) * 100) : 0;
+  return (
+    <div className={styles.chartBody} style={{ paddingLeft: 0, paddingRight: 0 }}>
+      <p className={styles.note} style={{ padding: "0 24px" }}>
+        <b>{rate}%</b> of known customers came more than once.
+        {data.anonymous ? ` ${data.anonymous} walk-in booking${data.anonymous === 1 ? "" : "s"} had no phone number and aren't counted.` : ""}
+      </p>
+      <div className={styles.tableWrap}>
+        <table className={styles.table}>
+          <thead>
+            <tr>
+              <th>Customer</th>
+              <th className={styles.r}>Visits</th>
+              <th className={styles.r}>Hours</th>
+              <th className={styles.r}>Spent</th>
+              <th className={styles.r}>Last</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.top_customers.map((c) => (
+              <tr key={`${c.name}-${c.phone}`}>
+                <td>
+                  <i className={styles.swatch} data-k={c.source} /> {c.name || "—"}
+                  {c.phone ? <span className={styles.phone}> {formatPhoneShort(c.phone)}</span> : null}
+                </td>
+                <td className={`${styles.r} num`}>{c.bookings}</td>
+                <td className={`${styles.r} num`}>{formatHours(c.hours)}</td>
+                <td className={`${styles.r} num`}>{rupees(Number(c.amount))}</td>
+                <td className={`${styles.r} num`}>{istShortDate(istDateKey(new Date(c.last_visit))).replace(/^\w+ /, "")}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+function formatPhoneShort(p: string) {
+  const d = p.replace(/\D/g, "");
+  return d.length === 12 && d.startsWith("91") ? `${d.slice(2, 7)} ${d.slice(7)}` : p;
+}
+
+/* ---------------------------------------------------------------- methods */
+
+function Methods({ data }: { data: RevenueData }) {
+  const rows = (["online", "cash", "upi", "card", "other"] as const)
+    .map((m) => ({ m, v: Number(data.by_method[m] ?? 0) }))
+    .filter((r) => r.v > 0);
+  const collected = Number(data.collected);
+  const owed = Number(data.outstanding) + Number(data.upcoming);
+  return (
+    <div className={styles.tableWrap}>
+      <table className={styles.table}>
+        <tbody>
+          {rows.map((r) => (
+            <tr key={r.m}>
+              <td>{methodLabel(r.m)}</td>
+              <td className={`${styles.r} num`}>{rupees(r.v)}</td>
+              <td className={`${styles.r} num`}>{collected ? Math.round((r.v / collected) * 100) : 0}%</td>
+            </tr>
+          ))}
+          <tr className={styles.totalRow}>
+            <td>Collected</td>
+            <td className={`${styles.r} num`}>{rupees(collected)}</td>
+            <td />
+          </tr>
+          {owed > 0 ? (
+            <tr>
+              <td>Not yet collected</td>
+              <td className={`${styles.r} num`}>{rupees(owed)}</td>
+              <td className={`${styles.r} num`}>{data.unpaid_count} booking{data.unpaid_count === 1 ? "" : "s"}</td>
+            </tr>
+          ) : null}
+        </tbody>
+      </table>
     </div>
   );
 }
@@ -361,10 +586,12 @@ function HourBars({ hours }: { hours: RevenueData["by_start_hour"] }) {
 
 /* ---------------------------------------------------------------- bits */
 
-function Stat({ label, value, foot }: { label: string; value: string; foot: string }) {
+function Stat({ label, value, foot, warn }: { label: string; value: string; foot: string; warn?: boolean }) {
   return (
     <div className={styles.stat}>
-      <div className="eyebrow">{label}</div>
+      <div className="eyebrow" style={warn ? { color: "var(--accent-deep)" } : undefined}>
+        {label}
+      </div>
       <div className={`${styles.statValue} display num`}>{value}</div>
       <div className={styles.statFoot}>{foot}</div>
     </div>

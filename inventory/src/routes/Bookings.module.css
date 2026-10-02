@@ -29,6 +29,8 @@
 .day { color: var(--muted); margin-right: 8px; }
 .name { color: var(--ink); font-weight: 500; }
 .detail { color: var(--muted-2); }
+.pay { font-size: 13px; color: var(--muted); }
+.pay[data-state="unpaid"] { color: var(--accent-deep); font-weight: 500; }
 
 @media (max-width: 880px) {
   .add { margin-left: 0; width: 100%; }

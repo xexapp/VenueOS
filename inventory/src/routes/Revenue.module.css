@@ -7,6 +7,34 @@
 .swatch[data-k="app"] { background: var(--app); }
 .swatch[data-k="desk"] { background: var(--desk); }
 
+.note { font-size: 13px; color: var(--muted); line-height: 1.45; }
+.note b { color: var(--ink); font-weight: 500; }
+.totalRow td { font-weight: 500; color: var(--ink); border-top: 1px solid var(--rule); }
+.linkName { color: var(--ink); font-weight: 500; }
+.linkName:hover { color: var(--accent-deep); }
+.phone { color: var(--muted-2); font-size: 12.5px; }
+
+/* stacked station bars */
+.hstack { position: absolute; left: 0; top: 0; bottom: 0; display: flex; gap: 2px; }
+.hseg[data-k="desk"] { background: var(--desk); }
+.hseg[data-k="app"] { background: var(--app); }
+.hstack > .hseg:last-child { border-radius: 0 4px 4px 0; }
+
+/* heatmap: one hue (ink), opacity carries magnitude */
+.heat { display: grid; gap: 3px; align-items: center; overflow-x: auto; }
+.heatHour { font-size: 11px; color: var(--muted-2); text-align: left; }
+.heatDay { font-size: 12.5px; color: var(--text-2); }
+.heatCell { height: 26px; border-radius: 4px; background: var(--track); position: relative; overflow: hidden; }
+.heatCell i { position: absolute; inset: 0; background: var(--ink-2); }
+.heatCell[data-none="true"] { background: repeating-linear-gradient(135deg, var(--track) 0 4px, var(--canvas) 4px 8px); }
+.heatFoot { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+.heatScale { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; color: var(--muted-2); }
+.heatScale i { width: 18px; height: 12px; border-radius: 3px; background: var(--ink-2); display: inline-block; }
+
+@media print {
+  .noPrint { display: none !important; }
+}
+
 /* ---- stat strip, same anatomy as the dashboard's ---- */
 .stats {
   display: grid;

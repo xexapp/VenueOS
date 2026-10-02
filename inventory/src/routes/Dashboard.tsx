@@ -3,11 +3,12 @@ import { Link } from "@tanstack/react-router";
 import type { Claim } from "@/lib/api";
 import { orderedStations, useSession, zoneLabel } from "@/lib/session";
 import { useSchedule } from "@/lib/schedule";
-import { isRunning, occupiesResource, orderStatusView, sourceLabel, TONE_STYLE } from "@/lib/status";
+import { isRunning, occupiesResource, orderStatusView, owedNow, sourceLabel, TONE_STYLE } from "@/lib/status";
 import { istDateKey, istLongDate, istTime } from "@/lib/time";
 import { Pulse } from "@/components/Pulse";
 import { BookingDialog } from "@/components/BookingDialog";
 import { ClaimDialog } from "@/components/ClaimDialog";
+import { CollectDialog, rupees } from "@/components/Payment";
 import { EmptyState, ErrorState, LoadingRows, Panel, PanelBody } from "@/components/Panel";
 import ui from "@/components/ui.module.css";
 import styles from "./Dashboard.module.css";
@@ -18,6 +19,7 @@ export function Dashboard() {
   const q = useSchedule(venue.id, today, today);
   const stations = useMemo(() => orderedStations(venue), [venue]);
   const [open, setOpen] = useState<Claim | null>(null);
+  const [collecting, setCollecting] = useState<Claim | null>(null);
   const [adding, setAdding] = useState(false);
 
   // Re-derive "now" every 30s so "free right now" and "ending soon"
@@ -71,7 +73,20 @@ export function Dashboard() {
   );
 
   const needsYou = useMemo(() => {
-    const items: { id: string; claim: Claim; text: string; action: string; urgent: boolean }[] = [];
+    const items: { id: string; claim: Claim; text: string; action: string; urgent: boolean; collect?: boolean }[] = [];
+    // Money owed for sessions that are over: the most common thing the desk forgets.
+    for (const c of live) {
+      if (owedNow(c, now) && new Date(c.expected_end_at).getTime() <= now) {
+        items.push({
+          id: `${c.id}-owed`,
+          claim: c,
+          text: `${c.customer_name || "Customer"} owes ${rupees(c.amount)} for ${c.resource_label} (ended ${istTime(c.expected_end_at)})`,
+          action: "Collect",
+          urgent: true,
+          collect: true,
+        });
+      }
+    }
     for (const c of live) {
       if (c.order_status === "PENDING_APPROVAL") {
         items.push({
@@ -181,7 +196,7 @@ export function Dashboard() {
                   <span className={styles.taskDot} data-urgent={t.urgent} />
                   <div>
                     <div className={styles.taskText}>{t.text}</div>
-                    <button className={styles.taskAction} type="button" onClick={() => setOpen(t.claim)}>
+                    <button className={styles.taskAction} type="button" onClick={() => (t.collect ? setCollecting(t.claim) : setOpen(t.claim))}>
                       {t.action}
                     </button>
                   </div>
@@ -193,6 +208,7 @@ export function Dashboard() {
       </div>
 
       {open ? <ClaimDialog claim={open} onClose={() => setOpen(null)} /> : null}
+      {collecting ? <CollectDialog claim={collecting} onClose={() => setCollecting(null)} /> : null}
       {adding ? <BookingDialog draft={{ dateKey: today }} onClose={() => setAdding(false)} /> : null}
     </>
   );

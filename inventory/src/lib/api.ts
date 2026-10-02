@@ -32,6 +32,9 @@ export type ClaimStatus = "HELD" | "CONFIRMED" | "EXPIRED" | "CANCELLED";
 export type Source = "app" | "phone" | "walk_in" | "other_platform";
 export type OfflineSource = Exclude<Source, "app">;
 
+/** How a desk booking was paid (orders.payment_method, migration 016). */
+export type PaymentMethod = "cash" | "upi" | "card" | "other";
+
 export interface Resource {
   id: string;
   kind: string; // "pc" | "console" for the trial venue
@@ -93,6 +96,9 @@ export interface Claim {
   is_paid: boolean;
   notes: string | null;
   approval_expires_at: string | null;
+  /** Desk bookings only; null paid_at = not collected yet. */
+  payment_method: PaymentMethod | null;
+  paid_at: string | null;
   created_at: string;
 }
 
@@ -189,8 +195,31 @@ export interface Revenue {
     bookings: number;
     hours: number;
     utilisation: number;
+    app: string;
+    desk: string;
   }[];
   by_start_hour: { hour: number; bookings: number }[];
+
+  collected: string;
+  outstanding: string;
+  upcoming: string;
+  unpaid_count: number;
+  by_method: Partial<Record<PaymentMethod | "online", string>>;
+  /** heatmap[weekday 0=Sun][hour] = booked station-hours summed over the range */
+  heatmap: number[][];
+  weekday_count: number[];
+  customers: number;
+  repeat: number;
+  anonymous: number;
+  top_customers: {
+    name: string;
+    phone: string;
+    source: "app" | "desk";
+    bookings: number;
+    amount: string;
+    hours: number;
+    last_visit: string;
+  }[];
 }
 
 export interface NewBlock {
@@ -324,6 +353,12 @@ export const api = {
 
   cancelClaim: (claimId: string, reason?: string) =>
     post<Claim>(`/api/v1/host/claims/${claimId}/cancel`, { reason }),
+
+  /** Mark a desk booking paid; `amount` replaces the recorded amount. */
+  recordPayment: (claimId: string, method: PaymentMethod, amount?: string) =>
+    post<Claim>(`/api/v1/host/claims/${claimId}/payment`, { method, amount }),
+  clearPayment: (claimId: string) =>
+    request<Claim>(`/api/v1/host/claims/${claimId}/payment`, { method: "DELETE" }),
 
   revenue: (venueId: string, from: string, to: string) =>
     request<Revenue>(`/api/v1/host/venues/${venueId}/revenue?from=${from}&to=${to}`),

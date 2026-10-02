@@ -57,7 +57,7 @@ export function ErrorState({
         </button>
       ) : null}
     </div>
-  );
+  );  
 }
 
 export function LoadingRows({ rows = 4 }: { rows?: number }) {
