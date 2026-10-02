@@ -28,3 +28,7 @@
   .methods { margin-left: 0; width: 100%; }
   .methods button { flex: 1; }
 }
+
+@media (pointer: coarse) {
+  .undo { padding: 10px 4px; margin: -10px -4px -10px auto; }
+}

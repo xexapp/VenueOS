@@ -84,3 +84,8 @@
     overflow-y: auto;
   }
 }
+
+@media (pointer: coarse) {
+  .trigger { min-width: 44px; min-height: 44px; justify-content: center; }
+  .signOut { padding: 14px 0 6px; }
+}

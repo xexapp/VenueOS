@@ -140,7 +140,7 @@ export function ClaimDialog({ claim, onClose }: { claim: Claim; onClose: () => v
         <Dt>Phone</Dt>
         <dd>
           {claim.customer_phone ? (
-            <a href={`tel:+${claim.customer_phone.replace(/\D/g, "")}`} style={{ color: "var(--accent-deep)" }} className="num">
+            <a href={`tel:+${claim.customer_phone.replace(/\D/g, "")}`} style={{ color: "var(--accent-deep)", display: "inline-block", padding: "10px 0", margin: "-10px 0" }} className="num">
               {formatPhone(claim.customer_phone)}
             </a>
           ) : (
@@ -150,7 +150,7 @@ export function ClaimDialog({ claim, onClose }: { claim: Claim; onClose: () => v
         {claim.status !== "CONFIRMED" || claim.order_status !== "CONFIRMED" ? (
           <>
             <Dt>Amount</Dt>
-            <dd className="num">{claim.amount && Number(claim.amount) > 0 ? `₹${Number(claim.amount).toLocaleString("en-IN")}` : "—"}</dd>
+            <dd className="num">{claim.amount && Number(claim.amount) > 0 ? `₹${Math.round(Number(claim.amount)).toLocaleString("en-IN")}` : "—"}</dd>
           </>
         ) : null}
         {claim.notes ? (

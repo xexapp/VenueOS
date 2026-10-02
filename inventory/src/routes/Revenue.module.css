@@ -177,3 +177,11 @@
   .plot { height: 200px; }
   .chartBody, .hbars { padding-left: 16px; padding-right: 16px; }
 }
+
+@media (pointer: coarse) {
+  .link, .linkName { padding: 10px 0; margin: -10px 0; }
+}
+
+@media (pointer: coarse) {
+  .dates input { height: 40px; }
+}

@@ -98,3 +98,11 @@
   .nav { flex-direction: row; flex: 1; gap: 4px; }
   .item { justify-content: center; padding: 10px 6px; font-size: 13.5px; }
 }
+
+@media (max-width: 720px) {
+  /* clear the iPhone home indicator; 0 everywhere else */
+  .rail { padding-bottom: calc(8px + env(safe-area-inset-bottom)); }
+}
+@media (pointer: coarse) {
+  .item { min-height: 44px; }
+}

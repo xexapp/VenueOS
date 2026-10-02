@@ -234,10 +234,22 @@
   .title { font-size: 24px; width: 100%; order: -1; }
   .actions { margin-left: 0; width: 100%; }
   .actions > * { flex: 1; }
-  .week { grid-template-columns: repeat(7, minmax(64px, 1fr)); overflow-x: auto; }
+  /* all seven days on one screen: weekday + date number, a fullness bar */
+  .week { gap: 4px; }
+  .weekDay { padding: 8px 4px 7px; align-items: center; text-align: center; }
+  .wd { font-size: 10.5px; letter-spacing: 0.04em; }
+  .dm { font-size: 17px; }
+  .dm span { display: none; }
   .count { display: none; }
+  .fill { margin-top: 3px; }
+  .datePick { width: 140px; }
   .gridInner { --label-w: 84px; }
   .rowLabel { padding: 0 12px; font-size: 13px; }
-  .groupLabel { padding: 0 12px 6px; }
+  .groupLabel { padding: 0 12px 6px; white-space: nowrap; overflow: visible; }
   .legendHint { margin-left: 0; }
+}
+
+@media (pointer: coarse) {
+  /* 16px text (no iOS zoom) needs room for the date and the picker icon */
+  .datePick { height: 40px; width: 168px; }
 }

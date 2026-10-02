@@ -145,7 +145,7 @@ export function Bookings() {
         title={`${totals.count} booking${totals.count === 1 ? "" : "s"}`}
         aside={
           q.data
-            ? `${totals.app} app · ${totals.desk} desk${totals.amount ? ` · ₹${totals.amount.toLocaleString("en-IN")} recorded` : ""}`
+            ? `${totals.app} app · ${totals.desk} desk${totals.amount ? ` · ₹${Math.round(totals.amount).toLocaleString("en-IN")} recorded` : ""}`
             : undefined
         }
       >
@@ -196,7 +196,7 @@ export function Bookings() {
                         </span>
                       </td>
                       <td className={`${styles.right} num`}>
-                        {c.amount && Number(c.amount) > 0 ? `₹${Number(c.amount).toLocaleString("en-IN")}` : "—"}
+                        {c.amount && Number(c.amount) > 0 ? `₹${Math.round(Number(c.amount)).toLocaleString("en-IN")}` : "—"}
                       </td>
                       <td className={styles.pay} data-state={occupiesResource(c.status) ? payState(c) : "free"}>
                         {occupiesResource(c.status) ? payLabel(c) || "—" : "—"}
@@ -208,6 +208,45 @@ export function Bookings() {
             </table>
           </div>
         )}
+        {/* Phones: one card per booking instead of an 8-column table.
+            Same rows, same tap-to-open; CSS shows one or the other. */}
+        {!q.isPending && !q.isError && rows.length ? (
+          <ul className={styles.cards}>
+            {rows.map((c) => {
+              const view = bookingView(c);
+              const tone = TONE_STYLE[view.tone];
+              const pay = occupiesResource(c.status) ? payLabel(c) : "";
+              return (
+                <li key={c.id}>
+                  <button type="button" className={styles.card} data-dead={!occupiesResource(c.status)} onClick={() => setOpen(c)}>
+                    <span className={styles.cardTop}>
+                      <span className="num">
+                        <span className={styles.day}>{istShortDate(istDateKey(new Date(c.starts_at)))}</span>
+                        {istTime(c.starts_at)}–{istTime(c.expected_end_at)}
+                      </span>
+                      <span className={ui.chip} style={{ color: tone.color, background: tone.background }}>
+                        {view.label}
+                      </span>
+                    </span>
+                    <span className={styles.cardWho}>
+                      <b>{c.customer_name || "Customer"}</b> · {c.resource_label}
+                    </span>
+                    <span className={styles.cardMeta}>
+                      {sourceLabel(c.source)}
+                      {c.amount && Number(c.amount) > 0 ? <span className="num"> · ₹{Math.round(Number(c.amount)).toLocaleString("en-IN")}</span> : null}
+                      {pay ? (
+                        <span className={styles.pay} data-state={payState(c)}>
+                          {" "}
+                          · {pay}
+                        </span>
+                      ) : null}
+                    </span>
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        ) : null}
       </Panel>
 
       {open ? <ClaimDialog claim={open} onClose={() => setOpen(null)} /> : null}

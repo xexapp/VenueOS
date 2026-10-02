@@ -1,6 +1,8 @@
 .shell {
   display: flex;
   height: 100%;
+  /* the visible viewport on phones: shrinks/grows as the address bar does */
+  height: 100dvh;
   background: var(--canvas);
   overflow: hidden;
 }

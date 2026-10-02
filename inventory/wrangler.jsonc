@@ -5,7 +5,7 @@
 // "single-page-application" serves index.html for any path that isn't a file,
 // so /calendar or /floor survive a refresh (the job public/_redirects does on Pages).
 // public/_headers is honoured by Workers static assets as well.
-{
+{d
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "xex-venueos",
   "compatibility_date": "2026-10-01",

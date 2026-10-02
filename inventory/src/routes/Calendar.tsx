@@ -196,7 +196,10 @@ function WeekStrip({
             type="button"
           >
             <span className={styles.wd}>{wd}</span>
-            <span className={`${styles.dm} display`}>{dm}</span>
+            <span className={`${styles.dm} display`}>
+              {dm.split(" ")[0]}
+              <span> {dm.split(" ").slice(1).join(" ")}</span>
+            </span>
             <span className={styles.count}>{n === undefined ? " " : n === 0 ? "No bookings" : `${n} booking${n === 1 ? "" : "s"}`}</span>
             <span className={styles.fill}>
               <span style={{ width: `${Math.min(fill, 1) * 100}%` }} />

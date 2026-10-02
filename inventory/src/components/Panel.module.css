@@ -42,3 +42,8 @@
   0%, 100% { opacity: 1; }
   50% { opacity: 0.45; }
 }
+
+@media (pointer: coarse) {
+  .retry { padding: 10px 0; }
+  .action a { display: inline-block; padding: 12px 0; margin: -12px 0; }
+}

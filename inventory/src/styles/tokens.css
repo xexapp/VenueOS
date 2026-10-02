@@ -125,3 +125,31 @@ a {
     transition: none !important;
   }
 }
+
+/* ============================================================
+   Touch screens (phones, tablets). Keyed on the pointer, not the
+   width, so a narrow laptop window keeps the compact desktop sizes.
+   ============================================================ */
+@media (pointer: coarse) {
+  /* iOS Safari zooms the whole page when an input under 16px is focused;
+     16px keeps the booking form steady on iPhone. */
+  input,
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+
+  /* No 300ms double-tap-zoom wait on buttons; no grey flash on tap. */
+  a,
+  button,
+  [role="button"],
+  label {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+  }
+}

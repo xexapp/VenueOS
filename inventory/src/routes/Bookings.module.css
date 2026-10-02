@@ -36,3 +36,35 @@
   .add { margin-left: 0; width: 100%; }
   .search { width: 100%; }
 }
+
+/* ---- phone cards (hidden on wider screens) ---- */
+.cards { display: none; list-style: none; padding: 0 12px 10px; }
+.card {
+  width: 100%;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px;
+  border-top: 1px solid var(--border-soft);
+  min-height: 44px;
+}
+.card:active { background: var(--tint); }
+.card[data-dead="true"] { opacity: 0.55; }
+.cardTop { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 13.5px; color: var(--ink-2); }
+.cardWho { font-size: 14.5px; color: var(--text-2); }
+.cardWho b { color: var(--ink); font-weight: 500; }
+.cardMeta { font-size: 12.5px; color: var(--muted); }
+
+@media (max-width: 700px) {
+  .tableWrap { display: none; }
+  .cards { display: block; }
+}
+
+@media (pointer: coarse) {
+  .check { min-height: 40px; }
+}
+
+@media (pointer: coarse) {
+  .dates input { height: 40px; }
+}

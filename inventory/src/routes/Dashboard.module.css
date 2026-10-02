@@ -99,3 +99,7 @@
   .stats { grid-template-columns: 1fr; }
   .stat { border-right: none; border-top: 1px solid var(--border); }
 }
+
+@media (pointer: coarse) {
+  .taskAction { padding: 10px 0; margin: -6px 0; }
+}
