@@ -36,7 +36,7 @@ function SignedIn() {
     );
   }
 
-  // A valid XeX account that owns no venue: the owner signed in with the
+  // A valid XEX account that owns no venue: the owner signed in with the
   // wrong number, or the venue has not been set up yet.
   const venue = venues.data.venues[0];
   if (!venue) {
@@ -44,7 +44,7 @@ function SignedIn() {
       <Centered>
         <EmptyState
           title="No venue on this account"
-          body={`${me.data?.full_name ?? "This account"} is signed in, but does not own a venue on XeX. Sign in with the venue's number, or ask the XeX team to link it.`}
+          body={`${me.data?.full_name ?? "This account"} is signed in, but does not own a venue on XEX. Sign in with the venue's number, or ask the XEX team to link it.`}
         />
         <div style={{ padding: "0 24px 24px" }}>
           <button className={`${ui.btn} ${ui.ghost}`} onClick={signOut} type="button">

@@ -17,13 +17,13 @@
   flex-direction: column;
   gap: 16px;
 }
-.brand { display: flex; align-items: center; gap: 10px; font-size: 14px; }
+.brand { display: flex; align-items: center; gap: 11px; font-size: 16px; }
 .brand b { font-weight: 700; }
 .brand span { color: var(--muted-2); }
 .mark {
-  width: 30px;
-  height: 30px;
-  border-radius: 8px;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
   background-image: url("/xex_logo.png");
   background-size: 212%;
   background-position: center;

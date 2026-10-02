@@ -156,7 +156,7 @@ export function Dashboard() {
           foot={stats.byKind.map(([k, v]) => `${v.free}/${v.total} ${zoneLabel(k)}`).join(" · ")}
         />
         <Stat label="Needs approval" value={q.isPending ? "—" : stats.needsApproval} foot={stats.needsApproval ? "Waiting on you" : "Nothing waiting"} />
-        <Stat label="App vs desk" value={q.isPending ? "—" : `${stats.app} / ${stats.desk}`} foot="XeX app / phone & walk-in" />
+        <Stat label="App vs desk" value={q.isPending ? "—" : `${stats.app} / ${stats.desk}`} foot="XEX app / phone & walk-in" />
       </div>
 
       {q.isPending ? (

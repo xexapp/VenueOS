@@ -12,7 +12,7 @@ import styles from "./Revenue.module.css";
 
 /* ============================================================
    Revenue: what the venue took, split the way the owner thinks
-   about it — the XeX app versus the desk (phone, walk-in, other
+   about it — the XEX app versus the desk (phone, walk-in, other
    platforms). Pink is always app and blue always desk, the same
    as the calendar, so the split reads without a legend lookup.
 
@@ -254,7 +254,7 @@ function DailyChart({ days }: { days: RevenueDay[] }) {
     <div className={styles.chartBody}>
       <div className={styles.chartHead}>
         <span className={styles.legend}>
-          <span><i className={styles.swatch} data-k="app" /> XeX app</span>
+          <span><i className={styles.swatch} data-k="app" /> XEX app</span>
           <span><i className={styles.swatch} data-k="desk" /> Desk (phone, walk-in, other)</span>
         </span>
         <button className={styles.link} onClick={() => setAsTable((v) => !v)} type="button">

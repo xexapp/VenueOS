@@ -83,7 +83,7 @@ export function occupiesResource(s: ClaimStatus): boolean {
 export function sourceLabel(s: Source): string {
   switch (s) {
     case "app":
-      return "XeX app";
+      return "XEX app";
     case "phone":
       return "Phone call";
     case "walk_in":

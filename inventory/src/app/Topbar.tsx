@@ -1,19 +1,11 @@
 import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { useSession } from "@/lib/session";
+import { ProfileMenu } from "./ProfileMenu";
 import styles from "./Topbar.module.css";
 
 export function Topbar({ here }: { here: string }) {
-  const { me } = useSession();
   const navigate = useNavigate();
   const [q, setQ] = useState("");
-  const name = me?.full_name ?? "";
-  const initials = name
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((w) => w[0]!.toUpperCase())
-    .join("");
 
   return (
     <header className={styles.bar}>
@@ -38,10 +30,7 @@ export function Topbar({ here }: { here: string }) {
             onChange={(e) => setQ(e.target.value)}
           />
         </form>
-        <div className={styles.who}>
-          <div className={styles.avatar}>{initials || "·"}</div>
-          <span className={styles.name}>{name}</span>
-        </div>
+        <ProfileMenu />
       </div>
     </header>
   );

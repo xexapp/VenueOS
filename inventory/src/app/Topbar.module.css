@@ -36,25 +36,7 @@
 .search::placeholder { color: var(--muted-3); }
 .search:focus { outline: none; border-color: var(--accent); background: var(--surface); }
 
-.who { display: flex; align-items: center; gap: 9px; }
-
-.avatar {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  background: var(--accent);
-  color: #fff;
-  font-size: 12px;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.name { font-size: 13.5px; color: var(--ink); }
-
 @media (max-width: 880px) {
   .bar { padding: 0 16px; gap: 12px; }
   .search { display: none; }
-  .name { display: none; }
-}
+  }

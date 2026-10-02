@@ -10,6 +10,11 @@
   display: flex;
   flex-direction: column;
   min-width: 0;
+  /* Without this, .main grows to its content's height instead of the
+     screen's, so .content never scrolls. On phones the shell is
+     column-reverse (tab bar at the bottom) and the overflow was clipped
+     from the TOP — pages opened cut off, stuck at the bottom. */
+  min-height: 0;
 }
 
 .content {

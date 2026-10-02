@@ -122,7 +122,7 @@ export function Bookings() {
           {(
             [
               ["all", "All"],
-              ["app", "XeX app"],
+              ["app", "XEX app"],
               ["desk", "Phone / walk-in"],
             ] as const
           ).map(([k, label]) => (

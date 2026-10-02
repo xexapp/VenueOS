@@ -20,7 +20,7 @@ import ui from "./ui.module.css";
    With `editing`, the same form edits an existing booking: move it
    (station, day, time), change its length, or correct the details.
    Only what changed is sent. An app booking's customer details
-   belong to the customer's XeX account, so they are shown read-only.
+   belong to the customer's XEX account, so they are shown read-only.
    ============================================================ */
 
 const DURATIONS = [30, 60, 90, 120, 180, 240];
@@ -249,7 +249,7 @@ export function BookingDialog({
 
         {isApp ? (
           <p className={ui.hint} style={{ fontSize: 13 }}>
-            Booked in the XeX app by {editing?.customer_name}. You can move it or change its length; the
+            Booked in the XEX app by {editing?.customer_name}. You can move it or change its length; the
             customer&apos;s details and payment stay as they are.
           </p>
         ) : (

@@ -4,7 +4,7 @@ import { api, ApiError, setAuthToken } from "@/lib/api";
 import ui from "@/components/ui.module.css";
 import styles from "./Login.module.css";
 
-/* The owner signs in with the same phone + OTP as the XeX app.
+/* The owner signs in with the same phone + OTP as the XEX app.
    There is no separate VenueOS account: owning the venue listing
    is what makes an account a venue account. */
 export function Login() {
@@ -42,7 +42,7 @@ export function Login() {
         </div>
         <h1 className={`${styles.title} display`}>{sent ? "Enter the code" : "Sign in"}</h1>
         <p className={styles.sub}>
-          {sent ? `We sent a code to ${phone}.` : "Use the phone number your venue is registered with on XeX."}
+          {sent ? `We sent a code to ${phone}.` : "Use the phone number your venue is registered with on XEX."}
         </p>
 
         {!sent ? (
@@ -104,7 +104,7 @@ export function Login() {
 
 function describe(err: Error): string {
   if (err instanceof ApiError) {
-    if (err.status === 409) return "This number has no XeX account. Ask the XeX team to set up your venue.";
+    if (err.status === 409) return "This number has no XEX account. Ask the XEX team to set up your venue.";
     if (err.status === 401) return "That code is not right. Check it and try again.";
     if (err.status === 429) return "Too many tries. Wait a minute and try again.";
   }

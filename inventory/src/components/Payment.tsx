@@ -41,7 +41,7 @@ export function PaymentBox({ claim, onDone }: { claim: Claim; onDone?: () => voi
       <div className={styles.box} data-state="paid">
         <span className={styles.status}>Paid online</span>
         <span className="num">{rupees(claim.amount)}</span>
-        <span className={styles.minor}>through the XeX app</span>
+        <span className={styles.minor}>through the XEX app</span>
       </div>
     );
   }

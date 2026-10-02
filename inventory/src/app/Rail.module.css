@@ -12,13 +12,13 @@
 .brand {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 11px;
   padding: 0 6px;
 }
 .mark {
-  width: 30px;
-  height: 30px;
-  border-radius: 8px;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
   flex: none;
   /* the source png is a small icon on a large white field, so scale past
      100% and clip: the box edge becomes the mark's edge, no white fringe */
@@ -29,8 +29,8 @@
 }
 
 .wordmark { display: flex; flex-direction: column; line-height: 1.15; }
-.wordmark b { font-weight: 700; font-size: 14.5px; color: var(--ink); }
-.wordmark span { font-size: 11.5px; color: var(--muted-2); }
+.wordmark b { font-weight: 700; font-size: 17px; color: var(--ink); letter-spacing: 0.02em; }
+.wordmark span { font-size: 13px; color: var(--muted-2); }
 
 .nav { display: flex; flex-direction: column; gap: 2px; }
 

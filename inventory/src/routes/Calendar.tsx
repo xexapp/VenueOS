@@ -469,7 +469,7 @@ function Grid({
 function Legend() {
   return (
     <div className={styles.legend}>
-      <span><i data-k="app" /> XeX app</span>
+      <span><i data-k="app" /> XEX app</span>
       <span><i data-k="desk" /> Phone / walk-in / other</span>
       <span><i data-k="pending" /> Waiting for you or payment</span>
       <span><i data-k="blocked" /> Blocked</span>
