@@ -1,7 +1,7 @@
 # XEX VenueOS — dashboard
 
 Vite + React + TypeScript SPA. Rosewood palette, Instrument Serif display,
-DM Sans body. Deploys as a static bundle to Cloudflare Pages.
+DM Sans body. Deploys as a static-assets Cloudflare Worker (`wrangler.jsonc`).
 
 ## Run
 
@@ -10,16 +10,22 @@ DM Sans body. Deploys as a static bundle to Cloudflare Pages.
     npm run typecheck
     npm run build      # -> dist/
 
-## Cloudflare Pages
+## Cloudflare (Workers, static assets)
 
-Build command: `npm run build`
-Output directory: `dist`
-`public/_redirects` gives the SPA fallback, `public/_headers` sets caching
-and security headers. No serverless functions; the Go API does everything.
+Project `xex-venueos`, served at `venue.xexaiapp.com`. Workers Builds runs, from
+the `inventory` root directory:
 
-Set `VITE_API_BASE` in the Pages environment to the deployed API origin.
-The API must send `Access-Control-Allow-Origin` for the dashboard origin
-explicitly (not `*`) because requests carry an Authorization header.
+    build:  npm run build
+    deploy: npx wrangler deploy
+
+`wrangler.jsonc` serves `dist/` and its `"single-page-application"` setting
+returns index.html for app routes, so /calendar survives a refresh. Do NOT add a
+Pages-style `public/_redirects` (`/* /index.html 200`): Workers rejects it as an
+infinite loop and the deploy fails. `public/_headers` still applies.
+
+`VITE_API_BASE` must be a BUILD variable (Vite inlines it at build time). The
+API must list this origin in `CORS_ALLOWED_ORIGINS` explicitly (not `*`)
+because requests carry an Authorization header.
 
 ## Backend it talks to (XeX-api, package `internal/host`)
 
