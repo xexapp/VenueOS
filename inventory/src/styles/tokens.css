@@ -1,0 +1,127 @@
+/* ============================================================
+   XEX VenueOS — Rosewood
+   Values lifted verbatim from VenueOS Directions (3a).
+   One hue, warm neutrals, hierarchy by size.
+   ============================================================ */
+:root {
+  /* ground */
+  --canvas: #F7F3F2;
+  --surface: #FFFDFD;
+  --tint: #FDF6F8;
+  --track: #F4EFF0;
+
+  /* lines */
+  --border: #EBE3E4;
+  --border-soft: #F1EAEC;
+  --rule: #D6CDCF;
+
+  /* ink */
+  --ink: #1E1A1C;
+  --ink-2: #332D30;
+  --text-2: #514A4D;
+  --muted: #7A7076;
+  --muted-2: #9B9296;
+  --muted-3: #A79EA1;
+  --faint: #B5ACAF;
+  --disabled: #C3B9BC;
+
+  /* one hue */
+  --accent: #D1477A;
+  --accent-deep: #8E2A50;
+  --accent-strong: #B93A69;
+  --accent-pale: #E9A9C1;
+  --accent-wash: #FBE7EF;
+
+  /* booking identity, the same on every screen: app = the brand pink,
+     desk (phone / walk-in / other platform) = blue. Validated as a pair
+     for colour-blind separation against --surface. */
+  --app: #B93A69;
+  --desk: #2A78D6;
+
+  /* type */
+  --display: "Instrument Serif", Georgia, serif;
+  --body: "DM Sans", system-ui, -apple-system, sans-serif;
+
+  /* geometry */
+  --r-sm: 4px;
+  --r-md: 7px;
+  --r-lg: 12px;
+
+  /* frame */
+  --rail-w: 222px;
+  --topbar-h: 62px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  font-family: var(--body);
+  background: var(--canvas);
+  color: var(--ink);
+  font-size: 14.5px;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+input {
+  font: inherit;
+  color: inherit;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: var(--r-sm);
+}
+
+/* Instrument Serif ships a single weight, so hierarchy is carried
+   by size and colour only. Never reach for a bold here. */
+.display {
+  font-family: var(--display);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+
+.eyebrow {
+  font-size: 12.5px;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--muted-2);
+}
+
+.num {
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}

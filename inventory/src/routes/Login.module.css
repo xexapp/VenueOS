@@ -1,0 +1,34 @@
+.page {
+  min-height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+  background: var(--canvas);
+}
+.card {
+  width: 100%;
+  max-width: 380px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 30px 28px 26px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.brand { display: flex; align-items: center; gap: 10px; font-size: 14px; }
+.brand b { font-weight: 700; }
+.brand span { color: var(--muted-2); }
+.mark {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  background-image: url("/xex_logo.png");
+  background-size: 212%;
+  background-position: center;
+}
+.title { font-size: 34px; color: var(--ink); line-height: 1.1; margin-top: 8px; }
+.sub { font-size: 14px; color: var(--muted); margin-top: -8px; }
+.link { font-size: 13px; color: var(--accent-deep); align-self: center; }
+.link:hover { text-decoration: underline; }

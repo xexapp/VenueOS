@@ -1,0 +1,112 @@
+/* Shared controls. One hue: the primary button is ink, the accent
+   is kept for focus and the few things that need the owner. */
+
+.btn {
+  height: 36px;
+  padding: 0 16px;
+  border-radius: var(--r-md);
+  font-size: 13.5px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  white-space: nowrap;
+  transition: background 0.12s ease, color 0.12s ease, border-color 0.12s ease;
+}
+.btn:disabled { opacity: 0.5; cursor: default; }
+
+.primary { background: var(--ink); color: var(--surface); }
+.primary:hover:not(:disabled) { background: var(--ink-2); }
+
+.accent { background: var(--accent); color: #fff; }
+.accent:hover:not(:disabled) { background: var(--accent-strong); }
+
+.ghost { border: 1px solid var(--border); background: var(--surface); color: var(--ink); }
+.ghost:hover:not(:disabled) { background: var(--track); }
+
+.danger { border: 1px solid var(--border); background: var(--surface); color: var(--accent-deep); }
+.danger:hover:not(:disabled) { background: var(--accent-wash); border-color: var(--accent-pale); }
+
+.small { height: 30px; padding: 0 12px; font-size: 13px; }
+
+.field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.label { font-size: 12.5px; color: var(--muted); }
+.hint { font-size: 12px; color: var(--muted-2); }
+
+.input,
+.select,
+.textarea {
+  height: 38px;
+  width: 100%;
+  padding: 0 12px;
+  border-radius: var(--r-md);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  font-size: 14px;
+  color: var(--ink);
+}
+.textarea { height: auto; min-height: 64px; padding: 9px 12px; resize: vertical; font: inherit; font-size: 14px; }
+.input:focus,
+.select:focus,
+.textarea:focus { outline: none; border-color: var(--accent); }
+.input::placeholder,
+.textarea::placeholder { color: var(--muted-3); }
+
+.row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 560px) { .row { grid-template-columns: 1fr; } }
+
+/* segmented choice: sources, durations */
+.segments { display: flex; flex-wrap: wrap; gap: 6px; }
+.segment {
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  font-size: 13px;
+  color: var(--text-2);
+}
+.segment:hover { background: var(--track); }
+.segment[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--surface); }
+
+.error {
+  font-size: 13px;
+  color: var(--accent-deep);
+  background: var(--accent-wash);
+  border-radius: var(--r-md);
+  padding: 9px 12px;
+  line-height: 1.4;
+}
+
+/* modal */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(30, 26, 28, 0.32);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 7vh 16px 16px;
+  z-index: 50;
+  overflow-y: auto;
+}
+.modal {
+  width: 100%;
+  max-width: 520px;
+  background: var(--surface);
+  border-radius: var(--r-lg);
+  border: 1px solid var(--border);
+  box-shadow: 0 24px 60px -24px rgba(30, 26, 28, 0.35);
+  display: flex;
+  flex-direction: column;
+}
+.modalHead { display: flex; align-items: baseline; gap: 10px; padding: 20px 24px 6px; }
+.modalTitle { font-size: 24px; color: var(--ink); }
+.modalSub { font-size: 13px; color: var(--muted-2); }
+.close { margin-left: auto; font-size: 20px; line-height: 1; color: var(--muted-2); padding: 4px 6px; }
+.close:hover { color: var(--ink); }
+.modalBody { padding: 14px 24px 8px; display: flex; flex-direction: column; gap: 14px; }
+.modalFoot { display: flex; gap: 10px; justify-content: flex-end; padding: 14px 24px 20px; flex-wrap: wrap; }
+
+.chip { font-size: 12.5px; padding: 3px 10px; border-radius: 11px; white-space: nowrap; display: inline-block; }

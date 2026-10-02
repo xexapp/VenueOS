@@ -1,0 +1,36 @@
+.toolbar { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.dates { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); }
+.dates input { width: 150px; height: 32px; }
+.add { margin-left: auto; }
+
+.filters { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.search { width: 300px; }
+.check { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; color: var(--muted); cursor: pointer; }
+.check input { accent-color: var(--ink); }
+
+.tableWrap { overflow-x: auto; padding: 0 12px 10px; }
+.table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+.table th {
+  text-align: left;
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted-2);
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+.table td { padding: 11px 12px; border-bottom: 1px solid var(--border-soft); color: var(--ink-2); white-space: nowrap; }
+.table tbody tr { cursor: pointer; }
+.table tbody tr:hover td { background: var(--tint); }
+.table tbody tr[data-dead="true"] td { color: var(--faint); }
+.right { text-align: right !important; }
+.day { color: var(--muted); margin-right: 8px; }
+.name { color: var(--ink); font-weight: 500; }
+.detail { color: var(--muted-2); }
+
+@media (max-width: 880px) {
+  .add { margin-left: 0; width: 100%; }
+  .search { width: 100%; }
+}
