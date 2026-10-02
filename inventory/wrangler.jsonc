@@ -7,7 +7,7 @@
 // public/_headers is honoured by Workers static assets as well.
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "venueos",
+  "name": "xex-venueos",
   "compatibility_date": "2026-10-01",
   "assets": {
     "directory": "./dist",
